@@ -1,0 +1,7 @@
+../Core/Src/main.c:81:5:main	1
+../Core/Src/main.c:161:6:SystemClock_Config	3
+../Core/Src/main.c:203:13:MX_GPIO_Init	1
+../Core/Src/main.c:238:6:StartDefaultTask	1
+../Core/Src/main.c:259:6:renderer	1
+../Core/Src/main.c:277:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:294:6:Error_Handler	1

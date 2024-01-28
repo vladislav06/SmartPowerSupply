@@ -1,0 +1,6 @@
+/.cmake/
+/.settings/
+/build/
+/cmake-build-debug/
+/Makefile
+/newlib_lock_glue.c
