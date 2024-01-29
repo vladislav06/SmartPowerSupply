@@ -61,14 +61,14 @@ TIM_HandleTypeDef htim10;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 256 * 4,
+  .stack_size = 256 * 16,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for render */
 osThreadId_t renderHandle;
 const osThreadAttr_t render_attributes = {
   .name = "render",
-  .stack_size = 256 * 4,
+  .stack_size = 256 * 16,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */

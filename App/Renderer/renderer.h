@@ -6,9 +6,9 @@
 #include <memory>
 #include <array>
 #include <vector>
-#include "Screens/screen.h"
 #include "cmsis_os.h"
-#include "Screens/screens.h"
+#include "Screens/screen.h"
+#include "Screens/buffer.h"
 
 
 typedef struct {                                // object data type
@@ -19,7 +19,7 @@ class Renderer {
 private:
     /// represents string of chars that are different
     struct Block {
-        //starting row
+        //starting row_
         uint8_t row;
         //starting column
         uint8_t col;
@@ -30,19 +30,27 @@ private:
     /// Current screen
     std::shared_ptr<Screen> screen;
 
-    std::array<std::string, 4> buffer;
-    std::array<std::string, 4> nextBuffer;
+    Buffer buffer;
 
+
+    Buffer nextBuffer;
+    osMessageQueueId_t queue;
+    uint32_t dummy=0;
     void showOnDisplay(const std::vector<Block> &diff);
 
+
+
+    //blink thread
+    osThreadId_t blinkHandle;
+
+    bool blinkState = true;
     /// Queue for notification
-    osMessageQueueId_t queue;
 
 
 public:
     Renderer();
 
-    void init( osMessageQueueId_t rq);
+    void init(osMessageQueueId_t rq);
 
     void setScreen(std::shared_ptr<Screen> scr);
 
@@ -54,5 +62,9 @@ public:
     void fullReDraw();
 
     std::shared_ptr<Screen> getCurrentScreen();
+
+    void blink();
+
+    bool getBlinkState();
 
 };

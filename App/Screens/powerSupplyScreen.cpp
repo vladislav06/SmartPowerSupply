@@ -7,24 +7,27 @@
 #include "array"
 #include "Utils/strUtils.h"
 #include "App/Hw/Hw.h"
+#include "buffer.h"
 
-void PowerSupplyScreen::render(std::array<std::string, 4> &screen) {
+void PowerSupplyScreen::render(Buffer &screen, bool blink) {
     screen[1][0] = 'V';
-    LargeFont::prints(screen, ftos(Hw::getEncoder1()->value), 1, 0);
+    printLargeFloat(screen[0][1], ftos(Hw::getEncoder1()->value), 1,blink);
 
     screen[3][0] = 'A';
-    LargeFont::prints(screen, ftos(Hw::getRealCurrent()), 1, 2);
+    printLargeFloat(screen[2][1], ftos(Hw::getRealCurrent()), 1,blink);
 
-    std::strcpy(&screen[0][13], "set:");
+
+    print(screen[0][13], "set:");
     screen[0][19] = 8;
     screen[1][13] = 'V';
     screen[1][14] = ':';
-    std::strcpy(&screen[1][15], ftos(Hw::getRealVoltage()).c_str());
+    //print(screen[1][15], ftos(Hw::getRealVoltage()));
+    printf(screen[1][15], Hw::getRealVoltage(),2,blink);
 
-    std::strcpy(&screen[2][13], "max:");
+    print(screen[2][13], "max:");
     screen[3][13] = 'A';
     screen[3][14] = ':';
-    std::strcpy(&screen[3][15], ftos(Hw::getEncoder1()->value).c_str());
+    print(screen[3][15], ftos(Hw::getEncoder1()->value));
 }
 
 void PowerSupplyScreen::onEncoder1Update() {

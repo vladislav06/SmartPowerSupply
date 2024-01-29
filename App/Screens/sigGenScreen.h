@@ -5,6 +5,7 @@
 
 #include "screen.h"
 #include "screens.h"
+#include "buffer.h"
 
 class SigGenScreen : public Screen, ScreenRegisterer<SigGenScreen, ScreenType::SIG_GEN> {
 protected:
@@ -15,7 +16,7 @@ public:
 
     ScreenType getType() override;
 
-    void render(std::array<std::string, 4> &screen) override;
+    void render(Buffer &screen, bool blink) override;
 
     void onEncoder1Update() override;
 

@@ -1,6 +1,7 @@
 #pragma once
 // Constants
 #include "lcd.h"
+#include "Screens/buffer.h"
 
 #define BIGNUMCHARS     13    // The total number of characters in each loadFont
 
@@ -12,9 +13,12 @@ public:
     ///Loads font in to display
     static void loadFont(Lcd &lcd);
 
-    static void printNum(std::array<std::string, 4> &dest, uint8_t col, uint8_t row, const uint8_t *Number);
+    static void printNum(Place dest, const uint8_t *Number);
+
+    static void printChar(Place dest,const char &num);
 
     ///Will print string of numbers at specified starting position in an array of 4 strings
-    static void prints(std::array<std::string, 4> &dest, std::string str, uint8_t col, uint8_t row);
+    static void prints(Place dest, std::string str);
+
 };
 

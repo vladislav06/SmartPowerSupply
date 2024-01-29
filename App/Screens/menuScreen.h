@@ -28,7 +28,7 @@ private:
 public:
     MenuScreen() : Screen("Screen") {};
 
-    void render(std::array<std::string, 4> &screen) override;
+    void render(Buffer &screen, bool blink) override;
 
     void onEncoder1Update() override;
 

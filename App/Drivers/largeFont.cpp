@@ -15,6 +15,7 @@
 
 #include <array>
 #include "largeFont.h"
+#include "Screens/buffer.h"
 
 
 //////////////////////////////////////////////////////////////////
@@ -174,27 +175,32 @@ void LargeFont::loadFont(Lcd &lcd) {
 // - print order: top left, bottom left, top right, bottom right
 /////////////////////////////////////////////////////////////////////
 
-void LargeFont::printNum(std::array<std::string, 4> &dest, uint8_t col, uint8_t row, const uint8_t *Number) {
+void LargeFont::printNum(Place dest, const uint8_t *Number) {
     uint8_t i, j, k = 0;
     for (i = 0; i < 2; i++) {
         for (j = 0; j < 2; j++) {
-            dest[row + j][col + i] = Number[k];
-            ///lcd.setCursor(col + i, row + j);
+            dest[j][i] = Number[k];
+            ///lcd.setCursor(col + i, row_ + j);
             ///lcd.write(Number[k]);
             k++;
         }
     }
 }
 
-void LargeFont::prints(std::array<std::string, 4> &dest, std::string str, uint8_t col, uint8_t row) {
+void LargeFont::printChar(Place dest, const char& num) {
+    LargeFont::printNum(dest, MegaTrek[num - '0']);
+}
+
+
+void LargeFont::prints(Place dest, std::string str) {
     uint8_t colpos = 0;
     for (int i = 0; i < str.length(); i++) {
         if (isdigit(str[i])) {
-            printNum(dest, col + colpos, row, MegaTrek[str[i] - '0']);
+            printNum(dest[0][colpos], MegaTrek[str[i] - '0']);
             colpos += 3;//each digit requires 3 places
         } else if (str[i] == '.') {
-            dest[row + 1][col + colpos - 1] = 111;//large dot
-            ///lcd.setCursor(col + colpos, row + 1);
+            dest[1][colpos - 1] = 111;//large dot
+            ///lcd.setCursor(col + colpos, row_ + 1);
             ///lcd.write(111);//large dot
             //colpos += 1;//dot only requires 1
         }

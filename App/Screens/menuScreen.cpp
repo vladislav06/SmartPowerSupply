@@ -5,16 +5,15 @@
 #include "menuScreen.h"
 #include "array"
 
-void MenuScreen::render(std::array<std::string, 4> &screen) {
+void MenuScreen::render(Buffer &screen, bool blink) {
     // list all available screens, excluding menu
     for (int n = 0; n < screens.size() && n < 4; n++) {
         if (n == selected) {
-            print(&screen[n][0], 0);
+            print(screen[n][0], 0);
             selectedScreen = screens[n];
         }
-        print(&screen[n][1], screens[n]->name);
+        print(screen[n][1], screens[n]->name);
     }
-
 }
 
 void MenuScreen::onEncoder1Update() {

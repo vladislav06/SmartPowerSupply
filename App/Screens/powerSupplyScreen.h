@@ -5,12 +5,13 @@
 
 #include "screen.h"
 #include "screens.h"
+#include "buffer.h"
 
 class PowerSupplyScreen : public Screen, ScreenRegisterer<PowerSupplyScreen, ScreenType::DEFAULT> {
 public:
     PowerSupplyScreen() : Screen("PowerSupply") {};
 
-    void render(std::array<std::string, 4> &screen) override;
+    void render(Buffer &screen, bool blink) override;
 
     void onEncoder1Update() override;
 

@@ -10,12 +10,12 @@
 
 Renderer::Renderer() {
     //preallocate buffer
-    for (int i = 0; i < 4; i++) {
-        buffer[i] = std::string(21, ' ');//one extra for \0
-    }
-    for (int i = 0; i < 4; i++) {
-        nextBuffer[i] = std::string(21, ' ');//one extra for \0
-    }
+//    for (int i = 0; i < 4; i++) {
+//        buffer[i] = std::string(21, ' ');//one extra for \0
+//    }
+//    for (int i = 0; i < 4; i++) {
+//        nextBuffer[i] = std::string(21, ' ');//one extra for \0
+//    }
 }
 
 void Renderer::setScreen(std::shared_ptr<Screen> scr) {
@@ -36,7 +36,7 @@ void Renderer::showOnDisplay(const std::vector<Block> &diff) {
 void Renderer::draw() {
 
     //draw screen
-    screen->render(nextBuffer);
+    screen->render(nextBuffer, blinkState);
 
     // compare buffer and nextbuffer,
     // store difference as vector of vectors that contain chars(to remove string concatenation) that are different
@@ -50,13 +50,13 @@ void Renderer::draw() {
             if (buffer[row][col] != nextBuffer[row][col]) {
                 if (col == lastCol + 1) {
                     //append to prev vector
-                    diff.back().chars.push_back(nextBuffer[row][col]);
+                    diff.back().chars.push_back(nextBuffer[row][col].c());
                 } else {
                     //create block
                     Block blck;
                     blck.col = col;
                     blck.row = row;
-                    blck.chars.push_back(nextBuffer[row][col]);
+                    blck.chars.push_back(nextBuffer[row][col].c());
                     diff.push_back(blck);
                 }
                 lastCol = col;
@@ -66,24 +66,51 @@ void Renderer::draw() {
     //
     showOnDisplay(diff);
     buffer = nextBuffer;
-    for (int i = 0; i < 4; i++) {
-        nextBuffer[i] = std::string(21, ' ');//one extra for \0
-    }
+    nextBuffer.clear();
+
 }
 
 
 void Renderer::fullReDraw() {
-    for (int i = 0; i < 4; i++) {
-        buffer[i] = std::string(21, ' ');//one extra for \0
-    }
+    buffer.clear();
+
 }
 
 std::shared_ptr<Screen> Renderer::getCurrentScreen() {
     return screen;
 }
 
+void callback(void *ths) {
+    auto self = (Renderer *) ths;
+    self->blink();
+}
+
 void Renderer::init(osMessageQueueId_t rq) {
     this->queue = rq;
+
+    //create thread for blink
+    const osThreadAttr_t blink_attributes = {
+            .name = "blink",
+            .stack_size = 256 * 2,
+            .priority = (osPriority_t) osPriorityNormal,
+    };
+    ///pass this to allow method call
+    blinkHandle = osThreadNew(callback, this, &blink_attributes);
 }
+
+void Renderer::blink() {
+    //blink
+    while (true){
+        this->blinkState = !blinkState;
+        osDelay(500);
+    }
+
+
+}
+
+bool Renderer::getBlinkState() {
+    return blinkState;
+}
+
 
 

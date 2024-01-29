@@ -12,7 +12,7 @@ ScreenType SigGenScreen::getType() {
     return SIG_GEN;
 }
 
-void SigGenScreen::render(std::array<std::string, 4> &screen) {
+void SigGenScreen::render(Buffer &screen, bool blink) {
 
 }
 
