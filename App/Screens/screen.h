@@ -9,6 +9,7 @@
 #include "screenType.h"
 #include "buffer.h"
 
+class Renderer;
 
 class Screen {
 protected:
@@ -31,6 +32,8 @@ protected:
     virtual void _setup() = 0;
 
     osMessageQueueId_t queue = nullptr;
+
+    Renderer *renderer = nullptr;
 public:
     const std::string name;
 
@@ -46,7 +49,7 @@ public:
     /// This Method will be called when screen is shown to the user,
     /// Use for uploading custom font
     /// @param qu queue for updating currently drawn screen
-    void setup(osMessageQueueId_t qu);
+    void setup(osMessageQueueId_t qu, Renderer *rndrConf);
 
     /// This method will be called when encoder 1 is rotated
     virtual void onEncoder1Update() = 0;

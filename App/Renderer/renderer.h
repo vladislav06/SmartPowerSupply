@@ -9,6 +9,7 @@
 #include "cmsis_os.h"
 #include "Screens/screen.h"
 #include "Screens/buffer.h"
+#include "rendererConfig.h"
 
 
 typedef struct {                                // object data type
@@ -31,11 +32,11 @@ private:
     std::shared_ptr<Screen> screen;
 
     Buffer buffer;
-
-
     Buffer nextBuffer;
+
     osMessageQueueId_t queue;
-    uint32_t dummy=0;
+
+
     void showOnDisplay(const std::vector<Block> &diff);
 
 
@@ -44,6 +45,7 @@ private:
     osThreadId_t blinkHandle;
 
     bool blinkState = true;
+    bool doBlink = true;
     /// Queue for notification
 
 
@@ -66,5 +68,8 @@ public:
     void blink();
 
     bool getBlinkState();
+
+    void blink(bool doBlink);
+    void setBlinkSate(bool blink);
 
 };

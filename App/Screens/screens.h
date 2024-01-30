@@ -29,7 +29,7 @@ private:
         if (N >= screens.size()) {
             screens.resize(screens.size() + (N - screens.size() + 1), nullptr);
 
-            screens[N] = std::make_unique<T>();
+            screens[N] = static_cast<const std::shared_ptr<Screen>>(std::make_unique<T>());
         } else {
             screens[(int) N] = std::make_unique<T>();
         }

@@ -6,10 +6,21 @@
 #include "screen.h"
 #include "screens.h"
 #include "buffer.h"
+#include "Renderer/renderer.h"
 
 class PowerSupplyScreen : public Screen, ScreenRegisterer<PowerSupplyScreen, ScreenType::DEFAULT> {
+private:
+    osTimerId_t blinkTimer;
 public:
-    PowerSupplyScreen() : Screen("PowerSupply") {};
+    PowerSupplyScreen() : Screen("PowerSupply") {
+        blinkTimer = osTimerNew([](void *s) {
+            auto *self = (PowerSupplyScreen *) s;
+            //enable blinking
+            self->renderer->blink(true);
+
+
+        }, osTimerOnce, this, NULL);
+    };
 
     void render(Buffer &screen, bool blink) override;
 

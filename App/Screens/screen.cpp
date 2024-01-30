@@ -27,7 +27,8 @@ void Screen::setNewScreen(ScreenType type) {
     (void) status;
 }
 
-void Screen::setup(osMessageQueueId_t qu) {
+void Screen::setup(osMessageQueueId_t qu, Renderer *rndr) {
+    this->renderer = rndr;
     this->queue = qu;
     this->_setup();
 
@@ -40,11 +41,11 @@ void Screen::printLargeFloat(Place place, const std::string &str, uint8_t select
         if (isdigit(str[i])) {
 //            if (!(numpos == selectedDigit && blink)) {
             LargeFont::printChar(place[0][colpos], str[i]);
-            colpos += 2;
+            colpos += 3;
             numpos += 1;
         } else if (str[i] == '.') {
-            place[1][colpos] = 111;//large dot
-            colpos += 1;
+            place[1][colpos - 1] = 111;//large dot
+            //colpos += 1;
         }
     }
 }
@@ -56,8 +57,8 @@ void Screen::printf(Place place, float num, uint8_t selectedDigit, bool blink) {
         if (!(digi == selectedDigit && blink)) {
             place[0][i] = s[i];
         }
-        if(isdigit(s[i])){
-            digi+=1;
+        if (isdigit(s[i])) {
+            digi += 1;
         }
     }
 }

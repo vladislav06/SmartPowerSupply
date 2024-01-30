@@ -9,18 +9,11 @@
 
 
 Renderer::Renderer() {
-    //preallocate buffer
-//    for (int i = 0; i < 4; i++) {
-//        buffer[i] = std::string(21, ' ');//one extra for \0
-//    }
-//    for (int i = 0; i < 4; i++) {
-//        nextBuffer[i] = std::string(21, ' ');//one extra for \0
-//    }
 }
 
 void Renderer::setScreen(std::shared_ptr<Screen> scr) {
     this->screen = std::move(scr);
-    this->screen->setup(queue);
+    this->screen->setup(queue, this);
 }
 
 
@@ -100,16 +93,26 @@ void Renderer::init(osMessageQueueId_t rq) {
 
 void Renderer::blink() {
     //blink
-    while (true){
-        this->blinkState = !blinkState;
+    while (true) {
+        if (this->doBlink) {
+            this->blinkState = !blinkState;
+        }
         osDelay(500);
     }
-
-
 }
 
 bool Renderer::getBlinkState() {
     return blinkState;
+}
+
+void Renderer::blink(bool doBlink) {
+    this->doBlink = doBlink;
+
+}
+
+void Renderer::setBlinkSate(bool blink) {
+    this->blinkState = blink;
+
 }
 
 
