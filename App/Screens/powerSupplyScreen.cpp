@@ -2,27 +2,24 @@
 // Created by vm on 24.16.1.
 //
 
-#include <cstring>
 #include "powerSupplyScreen.h"
-#include "array"
 #include "Utils/strUtils.h"
-#include "App/Hw/Hw.h"
 #include "buffer.h"
 #include "Renderer/renderer.h"
-
-void PowerSupplyScreen::render(Buffer &screen, bool blink) {
+#include "math.h"
+void PowerSupplyScreen::render(Buffer &screen) {
     //screen[1][0] = 'V';
-    printLargeFloat(screen[0][0], ftos(Hw::getEncoder1()->value), 1, blink);
+    printLargeF(screen[0][0], ftos(Hw::getRealVoltage()));
 
     // screen[3][0] = 'A';
-    printLargeFloat(screen[2][0], ftos(Hw::getRealCurrent()), 1, blink);
+    printLargeF(screen[2][0], ftos(Hw::getRealCurrent()));
 
 
     print(screen[0][11], "set:");
     screen[1][13] = 'V';
     screen[1][14] = ':';
     //print(screen[1][15], ftos(Hw::getRealVoltage()));
-    printf(screen[1][15], Hw::getRealVoltage(), 2, blink);
+    printf(screen[1][15], Hw::getSetVoltage(), 3-selectedDigit, blinker.blink());
 
     // print(screen[2][11], "max:");
     screen[2][13] = 'A';
@@ -32,13 +29,14 @@ void PowerSupplyScreen::render(Buffer &screen, bool blink) {
     print(screen[3][16], "CCCV");
 }
 
-void PowerSupplyScreen::onEncoder1Update() {
-    //this->update();
-    this->renderer->blink(false);
-    this->renderer->setBlinkSate(false);
-  //  osTimerStop(blinkTimer);
+void PowerSupplyScreen::onEncoder1Update(int difference) {
+    //disable blinking while value of encoder is changing
+    blinker.blink(false);
+    blinker.setBlink(false);
     osTimerStart(blinkTimer, 1000);
 
+    // increase voltage based on selected digit
+    Hw::setVoltage(Hw::getSetVoltage()+(0.001*pow(10,selectedDigit+1) *difference));
 
 
 }
@@ -50,7 +48,8 @@ void PowerSupplyScreen::onEncoder2Update() {
 void PowerSupplyScreen::onButtonPress(std::shared_ptr<Button> button) {
     switch (button->type) {
         case Button::MENU:
-            setNewScreen(MENU);
+            //setNewScreen(MENU);
+            selectedDigit = (selectedDigit+1)%4;
             break;
         case Button::ENC1:
             break;
@@ -59,11 +58,16 @@ void PowerSupplyScreen::onButtonPress(std::shared_ptr<Button> button) {
     }
 }
 
-void PowerSupplyScreen::_setup() {
+void PowerSupplyScreen::_start() {
     LargeFont::loadFont(*Hw::lcd);
+    blinker.start();
 
 }
 
 ScreenType PowerSupplyScreen::getType() {
     return DEFAULT;
+}
+
+void PowerSupplyScreen::_stop() {
+    blinker.stop();
 }

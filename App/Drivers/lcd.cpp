@@ -217,10 +217,10 @@ void Lcd::expanderWrite(uint8_t data) {
 
 void Lcd::pulseEnable(uint8_t _data) {
     expanderWrite(_data | En);    // En high
-    Hw::delauUs(1);        // enable pulse must be >450ns
+    Hw::delayUs(1);        // enable pulse must be >450ns
 
     expanderWrite(_data & ~En);    // En low
-    Hw::delauUs(50);        // commands need > 37us to settle
+    Hw::delayUs(50);        // commands need > 37us to settle
 }
 
 void Lcd::print(std::string str) {

@@ -58,6 +58,8 @@ struct Button {
 struct Encoder {
     /// Value cant be changed
     uint32_t value = 0;
+    //// Difference form previous update
+    int diff = 0;
     bool hasChanged = false;
 };
 
@@ -69,6 +71,7 @@ public:
     Hw() {
         instance = this;
     }
+
 
     // hardware
     inline static std::unique_ptr<Lcd> lcd{};
@@ -118,17 +121,24 @@ public:
 
     static State pinRead(Pin pin);
 
-    static void delauUs(uint16_t us);
+    static void delayUs(uint16_t us);
 
     static std::shared_ptr<Encoder> getEncoder1();
 
-    inline static float voltage = 0;
+
+    //output voltage control
+
+    inline static float _setVoltage = 0;
+    inline static float _realVoltage = 0;
+
+    static void setVoltage(float voltage);
+    static float getSetVoltage();
 
     static float getRealVoltage();
 
-    static float getRealCurrent();
+    //output current control
 
-    static float getSetVoltage();
+    static float getRealCurrent();
 
     static float getSetCurrent();
 };

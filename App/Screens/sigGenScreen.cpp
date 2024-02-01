@@ -4,7 +4,7 @@
 
 #include "sigGenScreen.h"
 
-void SigGenScreen::_setup() {
+void SigGenScreen::_start() {
 
 }
 
@@ -12,11 +12,11 @@ ScreenType SigGenScreen::getType() {
     return SIG_GEN;
 }
 
-void SigGenScreen::render(Buffer &screen, bool blink) {
+void SigGenScreen::render(Buffer &screen) {
 
 }
 
-void SigGenScreen::onEncoder1Update() {
+void SigGenScreen::onEncoder1Update(int difference) {
 
 }
 
@@ -34,4 +34,8 @@ void SigGenScreen::onButtonPress(std::shared_ptr<Button> button) {
         case Button::ENC2:
             break;
     }
+}
+
+void SigGenScreen::_stop() {
+
 }

@@ -32,7 +32,7 @@ osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
 
 
         Hw::pinWrite(Hw::PC13, Hw::menuButton->state);
-        Hw::voltage = Hw::menuButton->state;
+       // Hw::setVoltage = Hw::menuButton->state;
         osDelay(100);
 
     }
@@ -76,17 +76,18 @@ osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
             if (btn->risingEdge) {
                 renderer.getCurrentScreen()->onButtonPress(btn);
                 btn->reset();
-
             }
         }
 
         if (Hw::encoder1->hasChanged) {
-            renderer.getCurrentScreen()->onEncoder1Update();
+            renderer.getCurrentScreen()->onEncoder1Update(Hw::encoder1->diff);
             Hw::encoder1->hasChanged = false;
+            Hw::encoder1->diff = 0;
         }
 
 
         renderer.draw();
+        //renderer.fullReDraw();
     }
 }
 

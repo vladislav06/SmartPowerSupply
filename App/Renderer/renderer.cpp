@@ -4,6 +4,7 @@
 
 #include "renderer.h"
 #include "Hw/Hw.h"
+#include "Utils/debug.h"
 
 #include <utility>
 
@@ -12,28 +13,78 @@ Renderer::Renderer() {
 }
 
 void Renderer::setScreen(std::shared_ptr<Screen> scr) {
+    //stop previous screen
+    if (this->screen != nullptr) {
+        this->screen->stop();
+    }
     this->screen = std::move(scr);
-    this->screen->setup(queue, this);
+    this->screen->start(queue, this);
 }
 
 
 void Renderer::showOnDisplay(const std::vector<Block> &diff) {
+ //   Buffer debug;
     for (auto block: diff) {
         Hw::lcd->setCursor(block.col, block.row);
+       // Place place = debug[block.row][block.col];
         for (int i = 0; i < block.chars.size(); i++) {
             Hw::lcd->write(block.chars[i]);
+        //    place[0][i]=block.chars[i];
         }
     }
+//    for (int i = 0; i < 4; i++) {
+//        std::string str = "                    ";
+//        for (int n = 0; n < 20; n++) {
+//            char c = debug.buffer[i][n];
+//            if (c > 16 && c != 255) {
+//                str[n] = c;
+//            }
+//        }
+//        Debug::printf(str);
+//        Debug::printf("\n");
+//    }
 }
+
+uint8_t prevCol = 0;
+uint8_t prevRow = 0;
 
 void Renderer::draw() {
 
     //draw screen
-    screen->render(nextBuffer, blinkState);
+    screen->render(nextBuffer);
+    //debug buffer
+//    for (int i = 0; i < 4; i++) {
+//        std::string str = "                    ";
+//        for (int n = 0; n < 20; n++) {
+//            char c = nextBuffer.buffer[i][n];
+//            if (c > 16 && c != 255) {
+//                str[n] = c;
+//            }
+//        }
+//        Debug::printf(str);
+//        Debug::printf("\n");
+//    }
 
     // compare buffer and nextbuffer,
     // store difference as vector of vectors that contain chars(to remove string concatenation) that are different
     std::vector<Block> diff;
+
+//    // slowly update whole screen char by char
+//    Block blc;
+//    blc.row = prevRow;
+//    blc.col = prevCol;
+//    blc.chars.push_back(nextBuffer[prevRow][prevCol].c());
+//   // diff.push_back(blc);
+//    prevCol++;
+//
+//    if (prevCol == 19) {
+//        prevCol = 0;
+//        prevRow++;
+//    }
+//    if (prevRow == 3) {
+//        prevCol = 0;
+//        prevRow = 0;
+//    }
 
     //stores position of last different char
     uint8_t lastCol = 0XFF;//some value out of possible display index
@@ -55,6 +106,7 @@ void Renderer::draw() {
                 lastCol = col;
             }
         }
+        lastCol = 0XFF;// reset last last different char column index
     }
     //
     showOnDisplay(diff);
@@ -73,47 +125,8 @@ std::shared_ptr<Screen> Renderer::getCurrentScreen() {
     return screen;
 }
 
-void callback(void *ths) {
-    auto self = (Renderer *) ths;
-    self->blink();
-}
 
 void Renderer::init(osMessageQueueId_t rq) {
     this->queue = rq;
-
-    //create thread for blink
-    const osThreadAttr_t blink_attributes = {
-            .name = "blink",
-            .stack_size = 256 * 2,
-            .priority = (osPriority_t) osPriorityNormal,
-    };
-    ///pass this to allow method call
-    blinkHandle = osThreadNew(callback, this, &blink_attributes);
 }
-
-void Renderer::blink() {
-    //blink
-    while (true) {
-        if (this->doBlink) {
-            this->blinkState = !blinkState;
-        }
-        osDelay(500);
-    }
-}
-
-bool Renderer::getBlinkState() {
-    return blinkState;
-}
-
-void Renderer::blink(bool doBlink) {
-    this->doBlink = doBlink;
-
-}
-
-void Renderer::setBlinkSate(bool blink) {
-    this->blinkState = blink;
-
-}
-
-
 

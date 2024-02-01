@@ -7,33 +7,40 @@
 #include "screens.h"
 #include "buffer.h"
 #include "Renderer/renderer.h"
+#include "blinker.h"
 
 class PowerSupplyScreen : public Screen, ScreenRegisterer<PowerSupplyScreen, ScreenType::DEFAULT> {
 private:
     osTimerId_t blinkTimer;
+    Blinker blinker{2};
+    uint8_t  selectedDigit = 0;
 public:
     PowerSupplyScreen() : Screen("PowerSupply") {
-        blinkTimer = osTimerNew([](void *s) {
-            auto *self = (PowerSupplyScreen *) s;
-            //enable blinking
-            self->renderer->blink(true);
-
-
-        }, osTimerOnce, this, NULL);
+        blinkTimer = osTimerNew(
+                [](void *s) {
+                    auto *self = (PowerSupplyScreen *) s;
+                    //enable blinking
+                    self->blinker.blink(true);
+                },
+                osTimerOnce,
+                this,
+                NULL);
     };
 
-    void render(Buffer &screen, bool blink) override;
+    void render(Buffer &screen) override;
 
-    void onEncoder1Update() override;
+    void onEncoder1Update(int difference) override;
 
     void onEncoder2Update() override;
 
     void onButtonPress(std::shared_ptr<Button> button) override;
 
-    void _setup() override;
-
     ScreenType getType() override;
 
+protected:
+    void _stop() override;
+
+    void _start() override;
 
 };
 

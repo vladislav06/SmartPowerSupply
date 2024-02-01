@@ -39,13 +39,6 @@ private:
 
     void showOnDisplay(const std::vector<Block> &diff);
 
-
-
-    //blink thread
-    osThreadId_t blinkHandle;
-
-    bool blinkState = true;
-    bool doBlink = true;
     /// Queue for notification
 
 
@@ -65,11 +58,5 @@ public:
 
     std::shared_ptr<Screen> getCurrentScreen();
 
-    void blink();
-
-    bool getBlinkState();
-
-    void blink(bool doBlink);
-    void setBlinkSate(bool blink);
 
 };

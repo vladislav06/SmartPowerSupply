@@ -31,7 +31,7 @@ void Hw::pinWrite(Pin pin, State state) {
     HAL_GPIO_WritePin(pin.GPIO, pin.GPIO_Pin, (GPIO_PinState) state);
 }
 
-void Hw::delauUs(uint16_t us) {
+void Hw::delayUs(uint16_t us) {
     //__HAL_TIM_SET_COUNTER(Hw::delayTimer, 0);
     Hw::delayTimer->Instance->CNT = 0;
     // wait for the counter to reach the us input in the parameter
@@ -46,8 +46,15 @@ bool Hw::isReady() {
     return Hw::ready;
 }
 
+void Hw::setVoltage(float voltage) {
+    if (voltage < 0) {
+        voltage = 0;
+    }
+    _setVoltage = voltage;
+}
+
 float Hw::getRealVoltage() {
-    return voltage;
+    return _realVoltage;
 }
 
 float Hw::getRealCurrent() {
@@ -55,7 +62,7 @@ float Hw::getRealCurrent() {
 }
 
 float Hw::getSetVoltage() {
-    return 0;
+    return _setVoltage;
 }
 
 float Hw::getSetCurrent() {
@@ -89,9 +96,24 @@ void Hw::sampleHardware() {
     }
 
     //encoders
-    if (Hw::encoder1->value != _encoder1->Instance->CNT >> 2) {
+    uint32_t enc1Val = _encoder1->Instance->CNT >> 2;
+    if (Hw::encoder1->value != enc1Val) {
+
+        int32_t rawdiff = Hw::encoder1->value - enc1Val;
+
+        if (rawdiff > 50 || rawdiff < -50) {
+            rawdiff = 1;
+        }
+        //slippage or overflow
+        if (rawdiff > 20) {
+            rawdiff = 20;
+        } else if (rawdiff < -20) {
+            rawdiff = -20;
+        }
+
         Hw::encoder1->hasChanged = true;
-        Hw::encoder1->value = ( _encoder1->Instance->CNT >> 2);
+        Hw::encoder1->diff = rawdiff;
+        Hw::encoder1->value = (_encoder1->Instance->CNT >> 2);
     } else {
         Hw::encoder1->hasChanged = false;
     }
@@ -100,3 +122,4 @@ void Hw::sampleHardware() {
 State Hw::pinRead(Pin pin) {
     return static_cast<State>(HAL_GPIO_ReadPin(pin.GPIO, pin.GPIO_Pin));
 }
+

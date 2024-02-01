@@ -9,20 +9,21 @@
 
 class SigGenScreen : public Screen, ScreenRegisterer<SigGenScreen, ScreenType::SIG_GEN> {
 protected:
-    void _setup() override;
+    void _start() override;
 
 public:
     SigGenScreen() : Screen("SignalGen") {};
 
     ScreenType getType() override;
 
-    void render(Buffer &screen, bool blink) override;
+    void render(Buffer &screen) override;
 
-    void onEncoder1Update() override;
+    void onEncoder1Update(int difference) override;
 
     void onEncoder2Update() override;
 
     void onButtonPress(std::shared_ptr<Button> button) override;
+    void _stop() override;
 
 };
 

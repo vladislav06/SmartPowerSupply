@@ -5,7 +5,7 @@
 #include "menuScreen.h"
 #include "array"
 
-void MenuScreen::render(Buffer &screen, bool blink) {
+void MenuScreen::render(Buffer &screen) {
     // list all available screens, excluding menu
     for (int n = 0; n < screens.size() && n < 4; n++) {
         if (n == selected) {
@@ -16,7 +16,7 @@ void MenuScreen::render(Buffer &screen, bool blink) {
     }
 }
 
-void MenuScreen::onEncoder1Update() {
+void MenuScreen::onEncoder1Update(int difference) {
     selected = (Hw::encoder1->value - encoderStartValue) % screens.size();
 }
 
@@ -37,7 +37,7 @@ void MenuScreen::onButtonPress(std::shared_ptr<Button> button) {
 
 }
 
-void MenuScreen::_setup() {
+void MenuScreen::_start() {
 
     //save encoder value, for offset
     encoderStartValue = Hw::encoder1->value;
@@ -50,4 +50,8 @@ void MenuScreen::_setup() {
 
 ScreenType MenuScreen::getType() {
     return MENU;
+}
+
+void MenuScreen::_stop() {
+
 }
