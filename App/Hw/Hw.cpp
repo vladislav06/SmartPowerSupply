@@ -101,10 +101,11 @@ void Hw::sampleHardware() {
 
         int32_t rawdiff = Hw::encoder1->value - enc1Val;
 
+        // overflow
         if (rawdiff > 50 || rawdiff < -50) {
             rawdiff = 1;
         }
-        //slippage or overflow
+        // slippage
         if (rawdiff > 20) {
             rawdiff = 20;
         } else if (rawdiff < -20) {

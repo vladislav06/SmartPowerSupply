@@ -27,7 +27,7 @@ void MenuScreen::onEncoder2Update() {
 void MenuScreen::onButtonPress(std::shared_ptr<Button> button) {
     switch (button->type) {
         case Button::MENU:
-            setNewScreen(selectedScreen->getType());
+            setScreen(selectedScreen->getType());
             break;
         case Button::ENC1:
             break;

@@ -23,13 +23,13 @@ void Renderer::setScreen(std::shared_ptr<Screen> scr) {
 
 
 void Renderer::showOnDisplay(const std::vector<Block> &diff) {
- //   Buffer debug;
+    //   Buffer debug;
     for (auto block: diff) {
         Hw::lcd->setCursor(block.col, block.row);
-       // Place place = debug[block.row][block.col];
+        // Place place = debug[block.row][block.col];
         for (int i = 0; i < block.chars.size(); i++) {
             Hw::lcd->write(block.chars[i]);
-        //    place[0][i]=block.chars[i];
+            //    place[0][i]=block.chars[i];
         }
     }
 //    for (int i = 0; i < 4; i++) {
@@ -128,5 +128,39 @@ std::shared_ptr<Screen> Renderer::getCurrentScreen() {
 
 void Renderer::init(osMessageQueueId_t rq) {
     this->queue = rq;
+}
+
+[[noreturn]] void Renderer::start() {
+    for (;;) {
+        osDelay(30);
+
+        //renderer.fullReDraw();
+
+
+        //receive message
+        RendererMessage msg;
+        osStatus_t status = osMessageQueueGet(queue, &msg, NULL, 0);
+        if (status == osOK) {
+            setScreen(msg.screen);
+        }
+
+        // updates
+        for (const auto &btn: Hw::buttons) {
+            if (btn->risingEdge) {
+                getCurrentScreen()->onButtonPress(btn);
+                btn->reset();// will prevent triggering second time
+            }
+        }
+
+        if (Hw::encoder1->hasChanged) {
+            getCurrentScreen()->onEncoder1Update(Hw::encoder1->diff);
+            Hw::encoder1->hasChanged = false;
+            Hw::encoder1->diff = 0;
+        }
+
+
+        draw();
+        //renderer.fullReDraw();
+    }
 }
 

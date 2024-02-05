@@ -27,9 +27,12 @@ protected:
     /// Will print float with 2 leading zeros, and with precision of 2 digits after coma
     void printf(Place place, float num, uint8_t selectedDigit, bool blink);
 
-    void setNewScreen(ScreenType type);
+    void setScreen(ScreenType type);
+
+    void setScreen(std::shared_ptr<Screen> screen);
 
     virtual void _start() = 0;
+
     virtual void _stop() = 0;
 
     osMessageQueueId_t queue = nullptr;

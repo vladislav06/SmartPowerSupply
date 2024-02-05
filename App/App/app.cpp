@@ -28,11 +28,8 @@ osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
 
     for (;;) {
         Hw::sampleHardware();
-
-
-
         Hw::pinWrite(Hw::PC13, Hw::menuButton->state);
-       // Hw::setVoltage = Hw::menuButton->state;
+        // Hw::setVoltage = Hw::menuButton->state;
         osDelay(100);
 
     }
@@ -53,41 +50,7 @@ osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
 
     renderer.setScreen(screens[ScreenType::DEFAULT]);
 
-
-    int32_t diff;
-    Hw::_encoder1->Instance->CNT = 0;
     //rendering loop
-    for (;;) {
-        osDelay(30);
-
-        //renderer.fullReDraw();
-
-
-        //receive message
-        RendererMessage msg;
-        osStatus_t status = osMessageQueueGet(rq, &msg, NULL, 0);
-        if (status == osOK) {
-            renderer.setScreen(screens[msg.screenID0]);
-        }
-
-        // updates
-
-        for (const auto &btn: Hw::buttons) {
-            if (btn->risingEdge) {
-                renderer.getCurrentScreen()->onButtonPress(btn);
-                btn->reset();
-            }
-        }
-
-        if (Hw::encoder1->hasChanged) {
-            renderer.getCurrentScreen()->onEncoder1Update(Hw::encoder1->diff);
-            Hw::encoder1->hasChanged = false;
-            Hw::encoder1->diff = 0;
-        }
-
-
-        renderer.draw();
-        //renderer.fullReDraw();
-    }
+    renderer.start();
 }
 

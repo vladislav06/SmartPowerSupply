@@ -27,7 +27,7 @@ void SigGenScreen::onEncoder2Update() {
 void SigGenScreen::onButtonPress(std::shared_ptr<Button> button) {
     switch (button->type) {
         case Button::MENU:
-            setNewScreen(MENU);
+            setScreen(MENU);
             break;
         case Button::ENC1:
             break;

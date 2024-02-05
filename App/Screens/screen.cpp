@@ -3,11 +3,13 @@
 //
 
 #include <cstring>
+#include <utility>
 #include "screen.h"
 #include "Renderer/renderer.h"
 #include "Utils/strUtils.h"
 #include "usbd_cdc_if.h"
 #include "Utils/debug.h"
+#include "screens.h"
 
 void Screen::update() {
 
@@ -16,7 +18,7 @@ void Screen::update() {
 void Screen::print(Place place, const std::string &str) {
     //std::memcpy(&place, str.c_str(), str.size());
     for (int i = 0; i < str.size(); i++) {
-        place[0][i]=str[i];
+        place[0][i] = str[i];
     }
 
 }
@@ -25,12 +27,21 @@ void Screen::print(Place place, char ch) {
     place = ch;
 }
 
-void Screen::setNewScreen(ScreenType type) {
+void Screen::setScreen(ScreenType type) {
     auto msg = new RendererMessage();
-    msg->screenID0 = type;
+    msg->screen = screens[type];
     osStatus_t status = osMessageQueuePut(this->queue, msg, 0, 0);
     (void) status;
 }
+
+void Screen::setScreen(std::shared_ptr<Screen> screen) {
+    auto msg = new RendererMessage();
+    msg->screen = std::move(screen);
+    osStatus_t status = osMessageQueuePut(this->queue, msg, 0, 0);
+    (void) status;
+}
+
+
 
 void Screen::start(osMessageQueueId_t qu, Renderer *rndrConf) {
     this->renderer = rndrConf;

@@ -13,7 +13,7 @@
 
 
 typedef struct {                                // object data type
-    uint8_t screenID0;
+    std::shared_ptr<Screen> screen;
 } RendererMessage;
 
 class Renderer {
@@ -46,6 +46,9 @@ public:
     Renderer();
 
     void init(osMessageQueueId_t rq);
+
+    /// Will start main rendering loop
+    [[noreturn]] void start();
 
     void setScreen(std::shared_ptr<Screen> scr);
 
