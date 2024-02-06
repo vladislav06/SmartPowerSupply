@@ -87,7 +87,7 @@ void Renderer::draw() {
 //    }
 
     //stores position of last different char
-    uint8_t lastCol = 0XFF;//some value out of possible display index
+    uint8_t lastCol = 0XAA;//some value out of possible display index
 
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 20; col++) {
@@ -106,7 +106,7 @@ void Renderer::draw() {
                 lastCol = col;
             }
         }
-        lastCol = 0XFF;// reset last last different char column index
+        lastCol = 0XAA;// reset last last different char column index
     }
     //
     showOnDisplay(diff);

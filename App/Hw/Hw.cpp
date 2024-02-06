@@ -15,9 +15,19 @@ void Hw::start(ADC_HandleTypeDef &adc,
                TIM_HandleTypeDef &htim10) {
     Hw::delayTimer = std::make_unique<TIM_HandleTypeDef>(htim10);
     Hw::_encoder1 = std::make_unique<TIM_HandleTypeDef>(htim4);
+    Hw::pwm = std::make_unique<TIM_HandleTypeDef>(htim3);
+
+    Hw::adc = std::make_unique<ADC_HandleTypeDef>(adc);
 
     HAL_TIM_Base_Start(Hw::delayTimer.get());
     HAL_TIM_Encoder_Start(Hw::_encoder1.get(), TIM_CHANNEL_ALL);
+
+    HAL_TIM_PWM_Start(Hw::pwm.get(), TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(Hw::pwm.get(), TIM_CHANNEL_2);
+
+    //adc
+    HAL_ADC_Start(Hw::adc.get());
+    HAL_ADCEx_InjectedStart(Hw::adc.get());
 
     Hw::lcd = std::make_unique<Lcd>(i2c, 0x3F);
 }
@@ -51,10 +61,22 @@ void Hw::setVoltage(float voltage) {
         voltage = 0;
     }
     _setVoltage = voltage;
+#define VOLTAGE_CONV(V) (( 112.8668 * (V)) - 0.2708)
+    Hw::pwm->Instance->CCR1 = VOLTAGE_CONV(_setVoltage);
+    //Hw::pwm->Instance->CCR2 = 0;//current
 }
 
 float Hw::getRealVoltage() {
-    return _realVoltage;
+#define VOLTAGE_DIVIDER(V) ((V)*((130000.0+20000.0)/20000.0))
+#define ADC_CALIB 20
+    //uint16_t vref = 0;
+    //uint16_t volt = 0;
+    uint16_t vref = HAL_ADCEx_InjectedGetValue(Hw::adc.get(), ADC_INJECTED_RANK_1) - ADC_CALIB;
+    uint16_t volt = HAL_ADC_GetValue(Hw::adc.get());
+    float vdd = 1.20 * 4096.0 / vref;
+    float actualVoltage = VOLTAGE_DIVIDER(volt * vdd / 4096.0);
+    Hw::voltageAverage.addPoint(actualVoltage);
+    return Hw::voltageAverage.getAverage();
 }
 
 float Hw::getRealCurrent() {

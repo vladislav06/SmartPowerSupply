@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "App/Drivers/lcd.h"
+#include "Utils/rollingAverage.h"
 #include <memory>
 #include <vector>
 
@@ -67,6 +68,7 @@ class Hw {
 private:
     inline static bool ready = false;
     inline static Hw *instance = nullptr;
+
 public:
     Hw() {
         instance = this;
@@ -82,7 +84,7 @@ public:
 
     //timers
     inline static std::unique_ptr<TIM_HandleTypeDef> htim1{};
-    inline static std::unique_ptr<TIM_HandleTypeDef> htim3{};
+    inline static std::unique_ptr<TIM_HandleTypeDef> pwm{};
     inline static std::unique_ptr<TIM_HandleTypeDef> _encoder1{};
     inline static std::unique_ptr<TIM_HandleTypeDef> delayTimer{};
 
@@ -127,11 +129,13 @@ public:
 
 
     //output voltage control
+    /// Rolling average for voltage filtration
+    inline static RollingAverage voltageAverage{10};
 
     inline static float _setVoltage = 0;
-    inline static float _realVoltage = 0;
 
     static void setVoltage(float voltage);
+
     static float getSetVoltage();
 
     static float getRealVoltage();

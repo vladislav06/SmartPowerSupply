@@ -42,7 +42,7 @@
 
 // htim1;
 // htim2;  encoder 2
-// htim3;  2 chanel pwm
+// pwm;  2 chanel pwm
 // htim4;  encoder 1
 // htim10; for micro delays
 /* USER CODE END PM */
@@ -135,7 +135,7 @@ int main(void)
 
     // htim1;
     // htim2;  encoder 1
-    // htim3;  2 chanel pwm
+    // pwm;  2 chanel pwm
     // htim4;  encoder 2
     // htim10; for micro delays
     hwInit(&hadc1, &hi2c1, &htim2, &htim3, &htim4, &htim10);
@@ -265,7 +265,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
