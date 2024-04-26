@@ -19,11 +19,11 @@ public:
     /// Get calculated rolling average
     float getAverage();
 
-    void addPoint(int point);
+    void addPoint(float point);
 
 private:
     /// Fixed length list that contains points
-    std::vector<int> points{};
+    std::vector<float> points{};
 
     /// Calculated average
     float average = 0;

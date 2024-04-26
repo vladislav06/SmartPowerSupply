@@ -11,16 +11,31 @@
 
 class PowerSupplyScreen : public Screen, ScreenRegisterer<PowerSupplyScreen, ScreenType::DEFAULT> {
 private:
-    osTimerId_t blinkTimer;
-    Blinker blinker{2};
-    uint8_t  selectedDigit = 0;
+    osTimerId_t voltageBlinkTimer;
+    Blinker voltageBlinker{2};
+
+    osTimerId_t currentBlinkTimer;
+    Blinker currentBlinker{2};
+
+    uint8_t voltageSelectedDigit = 0;
+    uint8_t currentSelectedDigit = 0;
 public:
     PowerSupplyScreen() : Screen("PowerSupply") {
-        blinkTimer = osTimerNew(
+        voltageBlinkTimer = osTimerNew(
                 [](void *s) {
                     auto *self = (PowerSupplyScreen *) s;
                     //enable blinking
-                    self->blinker.blink(true);
+                    self->voltageBlinker.blink(true);
+                },
+                osTimerOnce,
+                this,
+                NULL);
+
+        currentBlinkTimer = osTimerNew(
+                [](void *s) {
+                    auto *self = (PowerSupplyScreen *) s;
+                    //enable blinking
+                    self->currentBlinker.blink(true);
                 },
                 osTimerOnce,
                 this,
@@ -31,7 +46,7 @@ public:
 
     void onEncoder1Update(int difference) override;
 
-    void onEncoder2Update() override;
+    void onEncoder2Update(int difference) override;
 
     void onButtonPress(std::shared_ptr<Button> button) override;
 

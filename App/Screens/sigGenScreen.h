@@ -20,7 +20,7 @@ public:
 
     void onEncoder1Update(int difference) override;
 
-    void onEncoder2Update() override;
+    void onEncoder2Update(int difference) override;
 
     void onButtonPress(std::shared_ptr<Button> button) override;
     void _stop() override;

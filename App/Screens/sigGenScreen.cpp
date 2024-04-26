@@ -20,7 +20,7 @@ void SigGenScreen::onEncoder1Update(int difference) {
 
 }
 
-void SigGenScreen::onEncoder2Update() {
+void SigGenScreen::onEncoder2Update(int difference) {
 
 }
 

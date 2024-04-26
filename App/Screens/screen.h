@@ -61,7 +61,7 @@ public:
     virtual void onEncoder1Update(int difference) = 0;
 
     /// This method will be called when encoder 2 is rotated
-    virtual void onEncoder2Update() = 0;
+    virtual void onEncoder2Update(int difference) = 0;
 
     /// This method will be called when any button is pressed
     /// @param button pointer to button that is pressed

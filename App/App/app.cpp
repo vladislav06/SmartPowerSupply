@@ -16,7 +16,14 @@
 #include "Screens/menuScreen.h"
 
 
-osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
+osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);
+
+const osThreadAttr_t adcTasAttributes = {
+        .name = "adcTask",
+        .stack_size = 512 * 4,
+        .priority = (osPriority_t) osPriorityNormal,
+};
+osThreadId_t adcTaskHandle;
 
 [[noreturn]] void app() {
     //init hardware
@@ -26,6 +33,15 @@ osMessageQueueId_t rq = osMessageQueueNew(10, sizeof(RendererMessage), NULL);;
     (void) screens.size();
     //draw loop
 
+    //start adc sampler
+
+    adcTaskHandle = osThreadNew([](void *argument) { Hw::adcSampler(); },
+                                NULL, &adcTasAttributes);
+
+
+
+
+    //button sampler
     for (;;) {
         Hw::sampleHardware();
         Hw::pinWrite(Hw::PC13, Hw::menuButton->state);

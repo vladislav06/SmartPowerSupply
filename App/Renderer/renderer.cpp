@@ -158,6 +158,12 @@ void Renderer::init(osMessageQueueId_t rq) {
             Hw::encoder1->diff = 0;
         }
 
+        if (Hw::encoder2->hasChanged) {
+            getCurrentScreen()->onEncoder2Update(Hw::encoder2->diff);
+            Hw::encoder2->hasChanged = false;
+            Hw::encoder2->diff = 0;
+        }
+
 
         draw();
         //renderer.fullReDraw();

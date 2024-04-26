@@ -26,7 +26,6 @@ struct Button {
         MENU,
         ENC1,
         ENC2,
-
     };
     Pin pin{};
 
@@ -86,6 +85,7 @@ public:
     inline static std::unique_ptr<TIM_HandleTypeDef> htim1{};
     inline static std::unique_ptr<TIM_HandleTypeDef> pwm{};
     inline static std::unique_ptr<TIM_HandleTypeDef> _encoder1{};
+    inline static std::unique_ptr<TIM_HandleTypeDef> _encoder2{};
     inline static std::unique_ptr<TIM_HandleTypeDef> delayTimer{};
 
     //encoders
@@ -99,8 +99,13 @@ public:
     inline const static Pin PB3 = {GPIOB, GPIO_PIN_3};
 
     inline static std::shared_ptr<Button> menuButton{new Button(PB5, Button::MENU)};
+    inline static std::shared_ptr<Button> enc1Button{new Button(PB3, Button::ENC1)};
+    inline static std::shared_ptr<Button> enc2Button{new Button(PB4, Button::ENC2)};
+
     inline static std::vector<std::shared_ptr<Button>> buttons{
-            menuButton
+            menuButton,
+            enc1Button,
+            enc2Button
     };
 
     /// Will start hardware
@@ -127,12 +132,15 @@ public:
 
     static std::shared_ptr<Encoder> getEncoder1();
 
+    static std::shared_ptr<Encoder> getEncoder2();
+
+    static void adcSampler();
 
     //output voltage control
     /// Rolling average for voltage filtration
-    inline static RollingAverage voltageAverage{10};
+    inline static RollingAverage voltageAverage{20};
 
-    inline static float _setVoltage = 0;
+    inline static float _setVoltage = 5;
 
     static void setVoltage(float voltage);
 
@@ -141,6 +149,13 @@ public:
     static float getRealVoltage();
 
     //output current control
+    /// Rolling average for current filtration
+
+    inline static RollingAverage currentAverage{20};
+
+    inline static float _setCurrent = 2;
+
+    static void setCurrent(float current);
 
     static float getRealCurrent();
 

@@ -10,8 +10,13 @@ float RollingAverage::getAverage() {
 }
 
 
-void RollingAverage::addPoint(int point) {
+void RollingAverage::addPoint(float point) {
     points.erase(points.begin());
     points.push_back(point);
-    average += (1 / (float) points.size()) * (float) (point - points[0]);
+    average = 0;
+    for (float p: points) {
+        average += p;
+    }
+    average /= points.size();
+    //average += (1 / (float) points.size()) * (float) (point - points[0]);
 }

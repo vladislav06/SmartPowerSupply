@@ -20,7 +20,7 @@ void MenuScreen::onEncoder1Update(int difference) {
     selected = (Hw::encoder1->value - encoderStartValue) % screens.size();
 }
 
-void MenuScreen::onEncoder2Update() {
+void MenuScreen::onEncoder2Update(int difference) {
 
 }
 
