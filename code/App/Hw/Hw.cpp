@@ -77,6 +77,26 @@ bool Hw::isReady() {
 // 5v-142000
 // 3.33-94000
 void Hw::setVoltage(float voltage) {
+    //convert voltage (presumably 0-12) into DAC voltage (0-3.3)
+    float dacVoltage = voltage;
+
+    //use DAC calibration values to acquire bit values for dac upper bits
+    uint8_t dacBits = 0;
+    //use all bits except 0, 0 bit will be controlled by pwm
+
+    for (int i = voltageDACCall.size() - 1; i > 0; i--) {
+        if (dacVoltage - voltageDACCall[i] >= 0) {
+            dacBits |= 1 << i;
+            dacVoltage -= voltageDACCall[i];
+        }
+    }
+    if (dacVoltage > voltageDACCall[0]) {
+        //cant output higher voltage than required!
+    }
+
+    //convert leftover voltage to pwm ccr value
+    uint32_t prc = int32_t(dacVoltage / voltageDACCall[0]) * Hw::pwm->Instance->ARR;//ARR-period, i.e. max value
+
     if (voltage < 0) {
         voltage = 0;
     }
@@ -84,9 +104,32 @@ void Hw::setVoltage(float voltage) {
     //way to decrease measured voltage lag
     //Hw::voltageAverage.addPoint(_setVoltage);
 
-#define VOLTAGE_CONV(V) (28742.51497005988*(V)-1712.5748502994102)
+//#define VOLTAGE_CONV(V) (28742.51497005988*(V)-1712.5748502994102)
 
-    Hw::pwm->Instance->CCR1 = VOLTAGE_CONV(_setVoltage);
+    //set dacBits to output
+    if (dacBits & (1 << 1)) {
+        pinWrite(VDAC1, HIGH);
+    } else {
+        pinWrite(VDAC1, LOW);
+    }
+    if (dacBits & (1 << 2)) {
+        pinWrite(VDAC2, HIGH);
+    } else {
+        pinWrite(VDAC2, LOW);
+    }
+    if (dacBits & (1 << 3)) {
+        pinWrite(VDAC3, HIGH);
+    } else {
+        pinWrite(VDAC3, LOW);
+    }
+    if (dacBits & (1 << 4)) {
+        pinWrite(VDAC4, HIGH);
+    } else {
+        pinWrite(VDAC4, LOW);
+    }
+
+    // set pwm to output
+    Hw::pwm->Instance->CCR1 = prc;
     //Hw::pwm->Instance->CCR2 = 0;//current
 }
 
@@ -97,7 +140,7 @@ void Hw::setCurrent(float current) {
     _setCurrent = current;
 //#define CURRENT_CONV(I)  (28742.51497005988*(I)-1712.5748502994102)
 
-    uint32_t cur = 463000 * _setCurrent  - 4300;
+    uint32_t cur = 463000 * _setCurrent - 4300;
     Hw::pwm->Instance->CCR2 = cur;
 }
 

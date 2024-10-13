@@ -8,6 +8,7 @@
 #include "Utils/rollingAverage.h"
 #include <memory>
 #include <vector>
+#include <array>
 
 #define INIT(type) std::unique_ptr<type>(nullptr)
 
@@ -98,6 +99,22 @@ public:
     inline const static Pin PB4 = {GPIOB, GPIO_PIN_4};
     inline const static Pin PB3 = {GPIOB, GPIO_PIN_3};
 
+    //voltage dac pins
+    inline static const std::array<Pin, 5> VDACPins = {
+            {GPIOB, GPIO_PIN_13},
+            {GPIOB, GPIO_PIN_12},
+            {GPIOB, GPIO_PIN_13},
+            {GPIOB, GPIO_PIN_13},
+            {GPIOB, GPIO_PIN_13},
+
+    };
+
+    //current dac pins
+    inline const static Pin CDAC1 = {GPIOB, GPIO_PIN_13};
+    inline const static Pin CDAC2 = {GPIOB, GPIO_PIN_13};
+    inline const static Pin CDAC3 = {GPIOB, GPIO_PIN_13};
+    inline const static Pin CDAC4 = {GPIOB, GPIO_PIN_13};
+
     inline static std::shared_ptr<Button> menuButton{new Button(PB5, Button::MENU)};
     inline static std::shared_ptr<Button> enc1Button{new Button(PB3, Button::ENC1)};
     inline static std::shared_ptr<Button> enc2Button{new Button(PB4, Button::ENC2)};
@@ -107,6 +124,9 @@ public:
             enc1Button,
             enc2Button
     };
+
+    inline static const std::array<float, 5> voltageDACCall = {0, 0, 0, 0, 0};
+    inline static const std::array<float, 5> currentDACCall = {0, 0, 0, 0, 0};
 
     /// Will start hardware
     static void start(ADC_HandleTypeDef &adc,
