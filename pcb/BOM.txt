@@ -1,0 +1,8 @@
+8pin connector - https://www.lcsc.com/product-detail/Screw-Terminal-Blocks_DORABO-DB125-2-54-8P-GN-S_C918126.html
+
+xnor - https://www.lcsc.com/product-detail/Logic-Gates_lingxingic-CD4077BM-LX_C24833630.html
+
+DIP 3pin - https://www.lcsc.com/product-detail/span-style-background-color-ff0-DIP-span-Switches_KAIFENG-KF1001-03P-R0-GL-DFT-01B_C976325.html
+
+
+uart buffer - https://www.lcsc.com/product-detail/Buffers-Drivers-Receivers-Transceivers_XBLW-SN74LVC1G126T353-XBLW_C41408444.html
